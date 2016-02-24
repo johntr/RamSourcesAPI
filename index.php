@@ -9,26 +9,27 @@ $r = new ResourceLoader($dbconfig);
 
 $app = new \Slim\App();
 
-
-$app->get('/', function ($request, $response, $args) use ($r) {
-  echo json_encode($r->getResources());
-
+$app->get('/', function (\Slim\Http\Request $request, \Slim\Http\Response $response, $args) use ($r) {
+  $response->withStatus(200);
+  $response->getBody()->write(json_encode($r->getResources()));
+  $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+  return $newResponse;
 });
 
-$app->get('/resource/{id}', function ($request, $responce, $args) use ($r) {
+$app->get('/resource/{id}', function (\Slim\Http\Request $request, \Slim\Http\Response $response, $args) use ($r) {
   $id = $args['id'];
- // echo $id;
-  try {
-    echo json_encode($r->getResources($id));
-  }
-  catch(Exception $e) {
-    echo $e->getMessage();
-  }
+  $response->withStatus(200);
+  $response->getBody()->write(json_encode($r->getResources($id)));
+  $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+  return $newResponse;
 });
 
-$app->get('/building/{bid}', function($request, $responce, $args) use ($r) {
+$app->get('/building/{bid}', function(\Slim\Http\Request $request, \Slim\Http\Response $response, $args) use ($r) {
   $bid = $args['bid'];
-  echo json_encode($r->getResourceByBuilding($bid));
+  $response->withStatus(200);
+  $response->getBody()->write(json_encode($r->getResourceByBuilding($bid)));
+  $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+  return $newResponse;
 });
 
 $app->run();
