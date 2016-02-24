@@ -2,7 +2,7 @@
 
 namespace RamSources\ResourceLoaders;
 
-class CommentLoader extends ResourceLoader {
+class CommentLoader {
 
   function getCommentsByResource($rid) {
 

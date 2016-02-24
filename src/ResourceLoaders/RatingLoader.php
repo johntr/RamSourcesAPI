@@ -2,7 +2,7 @@
 
 namespace RamSources\ResourceLoaders;
 
-class RatingLoader extends ResourceLoader {
+class RatingLoader {
 
   function getRatingByResource($rid) {
 
