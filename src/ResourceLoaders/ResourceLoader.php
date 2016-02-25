@@ -61,5 +61,36 @@ class ResourceLoader {
    */
   function getResourceByType($type) {
 
+    switch($type) {
+      case 'bathroom':
+        $sql = "SELECT *
+                from `Resource`
+                Inner join `Building` on Building.building_id = Resource.building_id
+                Inner join `Bathroom` on Resource.resource_id = Bathroom.resource_id
+                Where Resource.resource_type = :type";
+        break;
+      case 'vending':
+        $sql = "SELECT *
+                from `Resource`
+                Inner join `Building` on Building.building_id = Resource.building_id
+                Inner join `Vending` on Resource.resource_id = Vending.resource_id
+                Where Resource.resource_type = :type";
+        break;
+      case 'water':
+        $sql = "SELECT *
+                from `Resource`
+                Inner join `Building` on Building.building_id = Resource.building_id
+                Inner join `Water` on Resource.resource_id = Water.resource_id
+                Where Resource.resource_type = :type";
+        break;
+      default:
+        throw new \Exception('Type not configured.');
+    }
+    $this->db->query($sql);
+    $this->db->bind(':type', $type);
+    $this->db->execute();
+
+    return $this->db->results();
+
   }
 }
