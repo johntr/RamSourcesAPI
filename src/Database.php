@@ -17,12 +17,13 @@ class Database {
   protected $error;
 
 
-  function __construct($dbname, $dbconfig) {
+  function __construct($dbconfig) {
 
-    $this->dbname = $dbname;
+    $this->dbname = $dbconfig['db'];
     $this->host = $dbconfig['host'];
     $this->user = $dbconfig['un'];
     $this->pass = $dbconfig['pw'];
+
 
     $this->conn = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->user, $this->pass);
     $this->conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

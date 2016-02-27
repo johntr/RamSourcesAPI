@@ -10,7 +10,7 @@ class ResourceLoader {
 
   function __construct($dbconfig) {
     //set connections to db
-    $this->db = new Database('RamSources', $dbconfig);
+    $this->db = new Database($dbconfig);
   }
 
   /**
