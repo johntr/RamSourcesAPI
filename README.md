@@ -10,3 +10,10 @@ $dbconfig['host'] = '';
 $dbconfig['un'] = "";
 $dbconfig['pw'] = "";
 ```
+
+#### We now have the current endpoints setup.  
+`api.ramsources.com/v1/resources`                 *Returns all resources*
+`api.ramsources.com/v1/resource/{id}`             *Returns a specific resource add* Note: does not need {} just put the id there.   
+`api.ramsources.com/v1/resource/type/{type}`      *Returns all resources of a specific type*
+`api.ramsources.com/v1/building/{bid}`            *Returns all resources in a building*
+`api.ramsources.com/v1/buildings`                 *Returns all building on campus*
