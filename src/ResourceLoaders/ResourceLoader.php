@@ -42,6 +42,19 @@ class ResourceLoader {
   }
 
   /**
+   * Function to return all of the builds in the db.
+   * @return mixed
+   */
+  function getBuildings() {
+    $sql = "SELECT *
+            FROM `Building`";
+    $this->db->query($sql);
+    $this->db->execute();
+    return $this->db->results();
+
+  }
+
+  /**
    * @param $bid = building id
    */
   function getResourceByBuilding($bid) {
@@ -58,6 +71,8 @@ class ResourceLoader {
 
   /**
    * @param $type = resource type
+   * @return
+   * @throws \Exception
    */
   function getResourceByType($type) {
 
