@@ -50,7 +50,22 @@ class ResourceLoader {
             FROM `Building`";
     $this->db->query($sql);
     $this->db->execute();
-    return $this->db->results();
+    $data = $this->db->results();
+    $buildings = array();
+    foreach ($data as $d) {
+      if(!empty($d['location'])) {
+        $coords = explode(',', $d['location']);
+        $d['long'] = $coords[0];
+        $d['lat'] = $coords[1];
+      }
+      else {
+        $d['long'] = NULL;
+        $d['lat'] = NULL;
+      }
+      $buildings[] = $d;
+    }
+    unset($d);
+    return $buildings;
 
   }
 
