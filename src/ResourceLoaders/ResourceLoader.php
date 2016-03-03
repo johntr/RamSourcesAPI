@@ -55,12 +55,12 @@ class ResourceLoader {
     foreach ($data as $d) {
       if(!empty($d['location'])) {
         $coords = explode(',', $d['location']);
-        $d['long'] = $coords[0];
-        $d['lat'] = $coords[1];
+        $d['lat'] = $coords[0];
+        $d['long'] = $coords[1];
       }
       else {
-        $d['long'] = NULL;
         $d['lat'] = NULL;
+        $d['long'] = NULL;
       }
       $buildings[] = $d;
     }
