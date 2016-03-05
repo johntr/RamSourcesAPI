@@ -1,6 +1,6 @@
 <?php
 
-namespace RamSources\RamUser;
+namespace RamSources\User;
 use RamSources\Database\Database;
 
 class RamUser {
@@ -46,11 +46,12 @@ class RamUser {
       echo $e;
     }
     if(isset($userInfo)) {
-      $this->user = $userInfo['user'];
-      $this->password = $userInfo['pass'];
-      $this->name = $userInfo['name'];
-      $this->token = $userInfo['token'];
-      $this->tokenExp = $userInfo['token_exp'];
+      //print_r($userInfo);
+      $this->user = $userInfo[0]['user'];
+      $this->password = $userInfo[0]['pass'];
+      $this->name = $userInfo[0]['name'];
+      $this->token = $userInfo[0]['token'];
+      $this->tokenExp = $userInfo[0]['token_exp'];
     } else {
       throw new \Exception("No User Returned");
     }
@@ -58,7 +59,7 @@ class RamUser {
 
   public function createUserToken() {
     $token = $this->_generate_token();
-    $tokenexp = date('T-m-d H:i:s', strtotime('+1 year'));
+    $tokenexp = date('Y-m-d H:i:s', strtotime('+1 year'));
 
     $sql = "UPDATE `RamUsers` SET token = :token, token_exp = :token_exp WHERE user = :user";
     $this->db->query($sql);
@@ -71,17 +72,19 @@ class RamUser {
   }
 
   public function verifyToken($t) {
+
     if($this->verified && $t == $this->token) {
-      $today = date('T-m-d H:i:s', strtotime('now'));
-      if ($this->tokenExp < $today) {
+      $today = strtotime('now');
+      $currentexp = strtotime($this->tokenExp);
+      if ($currentexp > $today) {
         return TRUE;
       }
       else {
-        throw new \Exception("Token is good but out of date, Create new one");
+        return FALSE;
       }
     }
     else {
-      throw new \Exception("Token does not match for this user.");
+      return FALSE;
     }
   }
 
