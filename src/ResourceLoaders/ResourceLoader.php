@@ -56,7 +56,7 @@ class ResourceLoader {
       if(!empty($d['location'])) {
         $coords = explode(',', $d['location']);
         $d['lat'] = $coords[0];
-        $d['long'] = $coords[1];
+        $d['long'] = ltrim($coords[1]);
       }
       else {
         $d['lat'] = NULL;
