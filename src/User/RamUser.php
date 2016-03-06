@@ -72,16 +72,10 @@ class RamUser {
   }
 
   public function verifyToken($t) {
-
-    if($this->verified && $t == $this->token) {
-      $today = strtotime('now');
-      $currentexp = strtotime($this->tokenExp);
-      if ($currentexp > $today) {
-        return TRUE;
-      }
-      else {
-        return FALSE;
-      }
+    $today = strtotime('now');
+    $currentexp = strtotime($this->tokenExp);
+    if($t == $this->token && $currentexp > $today) {
+      return TRUE;
     }
     else {
       return FALSE;
