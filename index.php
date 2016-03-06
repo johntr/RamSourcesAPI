@@ -70,32 +70,46 @@ $app->group('/v1', function() use ($app,$dbconfig) {
 
   $app->group('/user', function() use ($app, $dbconfig) {
     $u = new RamUser($dbconfig);
-    $app->get('', function(Request $request, Response $response, $args) use ($u) {
-      $auth = $request->getHeader('Authorization');
-      $decodeAuth = explode(':',base64_decode(substr($auth[0], 6)));
-      print_r($decodeAuth);
-////  $u->createUser('jtredlich@gmail.com', 'test', 'John Redlich');
-//      $u->getUser('jtredlich@gmail.com');
-//      $u->verifyPass('jtredlich@gmail.com', 'test');
-//      //$tokenInfo = $u->createUserToken();
-//      $tokenInfo = $u->verifyToken('afa480035bbd463af11040fc3c551373') ? "Token is good" : "Token is bad";
-////
-//      $response->getBody()->write($tokenInfo);
+    $app->get('/new/{user}/{pass}/{name}', function(Request $request, Response $response, $args) use ($u) {
+      $user = $args['user'];
+      $pass = $args['pass'];
+      $rname = explode("-", $args['name']);
+      $name = $rname[0] . " " . $rname[1];
+      try {
+        $u->createUser($user, $pass, $name);
+        $response->withStatus(200);
+        $status = ['result' => 'Success', 'message' => 'User has been created'];
+        $response->getBody()->write(json_encode($status));
+      }
+      catch(PDOException $e) {
+        $response->withStatus(500);
+        $status = ['result' => 'Fail', 'message' => $e->getMessage()];
+        $response->getBody()->write(json_encode($status));
+        $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+        return $newresponce;
+      }
+    });
+    $app->get('/login', function(Request $request, Response $response, $args) use ($u) {
+      $authHeader = $request->getHeader('Authorization');
+      $userInfo = $u->decodeHeader($authHeader[0]);
+      $u->getUser($userInfo[0]);
+
+      try {
+        $u->verifyPass($userInfo[0], $userInfo[1]);
+        $response->withStatus(200);
+        $response->getBody()->write(json_encode($u->createUserToken()));
+        $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+        return $newresponce;
+      }
+      catch (Exception $e) {
+        $status = array('result' => 'Fail', 'message' => $e->getMessage());
+        $response->withStatus(500);
+        $response->getBody()->write(json_encode($status));
+        $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+        return $newresponce;
+      }
     });
   }); //end /resource
 }); //end /v1
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 $app->run();

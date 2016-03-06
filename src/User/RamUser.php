@@ -32,6 +32,7 @@ class RamUser {
     $this->db->bind(':name', $this->name);
     $this->db->execute();
     return $this->db->lastInsertId();
+
   }
 
   public function getUser($user) {
@@ -60,15 +61,19 @@ class RamUser {
   public function createUserToken() {
     $token = $this->_generate_token();
     $tokenexp = date('Y-m-d H:i:s', strtotime('+1 year'));
+    if($this->verified) {
+      $sql = "UPDATE `RamUsers` SET token = :token, token_exp = :token_exp WHERE user = :user";
+      $this->db->query($sql);
+      $this->db->bind(':token', $token);
+      $this->db->bind(':token_exp', $tokenexp);
+      $this->db->bind(':user', $this->user);
+      $this->db->execute();
 
-    $sql = "UPDATE `RamUsers` SET token = :token, token_exp = :token_exp WHERE user = :user";
-    $this->db->query($sql);
-    $this->db->bind(':token', $token);
-    $this->db->bind(':token_exp', $tokenexp);
-    $this->db->bind(':user', $this->user);
-    $this->db->execute();
-
-    return array($this->user, $token);
+      return array($this->user, $token);
+    }
+    else {
+      return array('result'=>'Fail', "message" => "User password not verified");
+    }
   }
 
   public function verifyToken($t) {
@@ -82,6 +87,11 @@ class RamUser {
     }
   }
 
+  public function decodeHeader($header) {
+
+    return explode(':',base64_decode(substr($header, 6)));
+  }
+
   public function verifyPass($tryUser, $tryPass) {
     $sql = "SELECT pass FROM `Ramusers` WHERE user = :user LIMIT 1";
     $this->db->query($sql);
@@ -93,6 +103,7 @@ class RamUser {
       $this->verified = TRUE;
     } else {
       $this->verified = FALSE;
+      throw new \Exception("Wrong Password");
     }
   }
 
