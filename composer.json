@@ -6,7 +6,8 @@
     "psr-4" : {
       "RamSources\\ResourceLoaders\\" : "src/ResourceLoaders",
       "RamSources\\Database\\" : "src/Database",
-      "RamSources\\User\\" : "src/User"
+      "RamSources\\User\\" : "src/User",
+      "RamSources\\Middleware\\" : "src/Middleware"
     }
   }
 }
