@@ -88,7 +88,6 @@ class RamUser {
   }
 
   public function decodeHeader($header) {
-
     return explode(':',base64_decode(substr($header, 6)));
   }
 

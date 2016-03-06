@@ -16,8 +16,8 @@ class UserAuthMiddleware {
 
   function __invoke($request, $response, $next) {
     $this->tokenAuth = $request->getHeader('Authorization');
-    $decodeAuth = explode(':',base64_decode(substr($this->tokenAuth[0], 6)));
     $this->u = new RamUser($this->dbconfig);
+    $decodeAuth = $this->u->decodeHeader($this->tokenAuth[0]);
     $this->u->getUser($decodeAuth[0]);
     if($this->u->verifyToken($decodeAuth[1])) {
       $response = $next($request, $response);
