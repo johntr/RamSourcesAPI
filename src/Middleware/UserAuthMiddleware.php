@@ -28,10 +28,4 @@ class UserAuthMiddleware {
       return $response;
     }
   }
-
-
-  private function denyAccess() {
-    $res = $this->app->responce();
-    $res->status(401);
-  }
 }
