@@ -24,7 +24,7 @@ $app->group('/v1', function() use ($app,$dbconfig) {
       $response->getBody()->write(json_encode($r->getResources()));
       $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
       return $newResponse;
-    })->add(new UserAuthMiddleware($dbconfig));
+    });
 
 
     $app->get('/id/{id}', function (Request $request, Response $response, $args) use ($r) {
