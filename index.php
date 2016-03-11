@@ -109,7 +109,13 @@ $app->group('/v1', function() use ($app,$dbconfig) {
         return $newresponce;
       }
     });
-  }); //end /resource
+    /*
+    $app->get('/login/web', function(Request $request, Response $response, $args) use ($u) {
+      include 'src/Templates/login.php';
+      $response->getBody()->write($html);
+    });
+    */
+  }); //end /user
 }); //end /v1
 
 $app->run();
