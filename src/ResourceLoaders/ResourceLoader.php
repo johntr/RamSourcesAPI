@@ -121,6 +121,76 @@ class ResourceLoader {
     $this->db->execute();
 
     return $this->db->results();
+  }
 
+  /**
+   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+   * UPDATE CALLS.
+   */
+  function updateResource($data) {
+    //resource specific sql query in typeSQL var.
+    $resourceType = $data['resource_data']['resource_type'];
+    switch($resourceType) {
+      case 'bathroom':
+        $typeSQL = "UPDATE `Bathroom` SET ";
+        break;
+      case 'vending':
+        $typeSQL = "UPDATE `Vending` SET ";
+        break;
+      case 'water':
+        $typeSQL = "UPDATE `Water` SET ";
+        break;
+      default:
+        //if we don't get a good type return with a JSON error message.
+        $message = array('Result' => "FAILURE: Unable to determine resource type.");
+        return $message;
+    }
+
+    $bind = array();
+    $i = 0;
+    //Generate update keys and values and build array for value binds.
+    foreach($data['type_data'] as $k => $v) {
+      $typeSQL .= "$k = :$k, ";
+
+      $tempBind = ':'. $k;
+      $bind[$i]['key'] = $tempBind;
+      $bind[$i]['value'] = $v;
+      $i++;
+    }
+    //remove trailing ,
+    $typeSQL = rtrim($typeSQL, ", ");
+    $resourceIdType = $resourceType . "_id";
+    $typeSQL .= " WHERE " . $resourceIdType . " = :id";      //finish off typeSQL statment.
+
+    //build generic resource query.
+    $resourceSQL = "UPDATE `Resource` SET  building_id = :bid, resource_type = :rtype , resource_name = :rname, floor = :floor WHERE resource_id = :rid";
+
+    //Now that we have our 2 queries lets run them.
+    try {
+      $this->db->query($typeSQL);
+      $this->db->beginTransaction();
+      $i=0;
+      foreach ($bind as $b) {
+        $this->db->bind($b['key'], $b['value']);
+        $i++;
+      }
+      $this->db->bind(':id', $data['type_data'][$resourceIdType]);
+      $this->db->execute();
+
+      $this->db->query($resourceSQL);
+      $this->db->bind(':rid', $data['resource_data']['resource_id']);
+      $this->db->bind(':bid', $data['resource_data']['building_id']);
+      $this->db->bind(':rtype', $data['resource_data']['resource_type']);
+      $this->db->bind(':rname', $data['resource_data']['resource_name']);
+      $this->db->bind(':floor', $data['resource_data']['floor']);
+      $this->db->execute();
+      $this->db->endTransaction();
+
+      $message = array('Result' => 'Success');
+    } catch (\Exception $e) {
+      $this->db->cancelTransaction();
+      $message = array('Result' => $e->getMessage());
+    }
+    return $message;
   }
 }
