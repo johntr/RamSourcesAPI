@@ -41,12 +41,21 @@ $app->group('/v1', function() use ($app,$dbconfig) {
         $response->getBody()->write(json_encode($r->getResourceByType($t)));
         $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
         return $newResponse;
-      }
-      catch (Exception $e) {
+      } catch (Exception $e) {
         $new_response = $response->withStatus(400);
         $response->getBody()->write($e->getMessage());
         return $new_response;
       }
+    });
+    $app->put('/update/id/{id}', function (Request $request, Response $response, $args) use ($r) {
+
+      $parsedData = $request->getParsedBody();
+      $updateResponse = $r->updateResource($parsedData);
+
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($updateResponse));
+      $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newResponse;
     });
   }); //end /resource
 
