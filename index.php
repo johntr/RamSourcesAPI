@@ -5,6 +5,7 @@ require 'config.php';
 
 use RamSources\ResourceLoaders\ResourceLoader;
 use RamSources\User\RamUser;
+use RamSources\ResourceLoaders\CommentLoader;
 use RamSources\Middleware\UserAuthMiddleware;
 use RamSources\Middleware\AppAuthMiddleware;
 use Slim\Http\Request;
@@ -125,6 +126,18 @@ $app->group('/v1', function() use ($app,$dbconfig) {
     });
     */
   }); //end /user
+  $app->group('/comment', function() use ($app, $dbconfig) {
+    $c = new CommentLoader($dbconfig);
+    $app->post('/new', function (Request $request, Response $response, $args) use ($c) {
+      $parsedData = $request->getParsedBody();
+      $updateResponse = $c->addComment($parsedData);
+
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($updateResponse));
+      $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newResponse;
+    });
+  });
 }); //end /v1
 
 $app->run();
