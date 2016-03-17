@@ -3,13 +3,16 @@
 
 namespace RamSources\ResourceLoaders;
 use RamSources\Database\Database;
+use RamSources\ResourceLoaders\CommentLoader;
 
 class ResourceLoader {
 
   private $db; //current db connection
+  private $dbconfig;
 
   function __construct($dbconfig) {
     //set connections to db
+    $this->dbconfig = $dbconfig;
     $this->db = new Database($dbconfig);
   }
 
@@ -123,10 +126,32 @@ class ResourceLoader {
     return $this->db->results();
   }
 
+  function getResourceDetail($id) {
+    $resourceData = $this->getResources($id);
+    $c = new CommentLoader($this->dbconfig);
+    $commentData = $c->getCommentsByResource($id);
+    $resourceType = ucwords($resourceData['resource_type']);
+    $sql = "SELECT * FROM `$resourceType` WHERE resource_id = :id";
+
+    $this->db->query($sql);
+    $this->db->bind(':id', $id);
+    $this->db->execute();
+    $resourceTypeData = $this->db->single();
+    $returnDta['resource'] = array_merge($resourceData, $resourceTypeData);
+    $returnDta['comments'] = $commentData;
+
+    return $returnDta;
+
+  }
   /**
    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
    * UPDATE CALLS.
+   *
+   * Function to update resources. THis will take a 2d array with resource_data and type_data elements.
+   * @param $data
+   * @return array
    */
+
   function updateResource($data) {
     //resource specific sql query in typeSQL var.
     $resourceType = $data['resource_data']['resource_type'];
