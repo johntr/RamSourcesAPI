@@ -48,6 +48,14 @@ $app->group('/v1', function() use ($app,$dbconfig) {
         return $new_response;
       }
     });
+    $app->get('/detail/id/{id}', function(Request $request, Response $response, $args) use ($r) {
+      $id = $args['id'];
+
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($r->getResourceDetail($id)));
+      $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newResponse;
+    });
     $app->put('/update/id/{id}', function (Request $request, Response $response, $args) use ($r) {
 
       $parsedData = $request->getParsedBody();
@@ -131,6 +139,15 @@ $app->group('/v1', function() use ($app,$dbconfig) {
     $app->post('/new', function (Request $request, Response $response, $args) use ($c) {
       $parsedData = $request->getParsedBody();
       $updateResponse = $c->addComment($parsedData);
+
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($updateResponse));
+      $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newResponse;
+    });
+    $app->get('/id/{id}', function (Request $request, Response $response, $args) use ($c) {
+      $id = $args['id'];
+      $updateResponse = $c->getCommentsByResource($id);
 
       $response->withStatus(200);
       $response->getBody()->write(json_encode($updateResponse));
