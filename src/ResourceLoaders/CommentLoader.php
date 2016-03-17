@@ -18,6 +18,7 @@ class CommentLoader {
     $this->conn->query($sql);
     $this->conn->bind(':rid', $rid);
     $this->conn->execute();
+
     return $this->conn->results();
   }
 
@@ -36,7 +37,7 @@ class CommentLoader {
       $message = array('Result' => $this->conn->lastInsertId());
       return $message;
     } catch (\PDOException $e) {
-      echo $this->conn->debugDumpParams();
+
       $message = array('Result' => $e->getMessage());
       return $message;
     }
