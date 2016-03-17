@@ -128,19 +128,25 @@ class ResourceLoader {
 
   function getResourceDetail($id) {
     $resourceData = $this->getResources($id);
+    $resourceType = ucwords($resourceData['resource_type']);
+
     $c = new CommentLoader($this->dbconfig);
     $commentData = $c->getCommentsByResource($id);
-    $resourceType = ucwords($resourceData['resource_type']);
+
     $sql = "SELECT * FROM `$resourceType` WHERE resource_id = :id";
-
-    $this->db->query($sql);
-    $this->db->bind(':id', $id);
-    $this->db->execute();
-    $resourceTypeData = $this->db->single();
-    $returnDta['resource'] = array_merge($resourceData, $resourceTypeData);
-    $returnDta['comments'] = $commentData;
-
-    return $returnDta;
+    try {
+      $this->db->query($sql);
+      $this->db->bind(':id', $id);
+      $this->db->execute();
+      $resourceTypeData = $this->db->single();
+      $returnDta['resource'] = array_merge($resourceData, $resourceTypeData);
+      $returnDta['comments'] = $commentData;
+      return $returnDta;
+    }
+    catch (\PDOException $e) {
+      $message = array('Result' => $e->getMessage());
+      return $message;
+    }
 
   }
   /**
