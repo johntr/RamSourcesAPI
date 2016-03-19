@@ -14,6 +14,7 @@ $app->group('/v1', function() use ($app,$dbconfig) {
   require 'app/routes/building_routes.php';
   require 'app/routes/user_routes.php';
   require 'app/routes/comment_routes.php';
+  require 'app/routes/rating_routes.php';
 
 }); //end /v1
 
