@@ -1,9 +1,9 @@
 <?php
 
-namespace RamSources\ResourceLoaders;
+namespace RamSources\Controllers;
 use RamSources\Database\Database;
 
-class RatingLoader {
+class RatingController {
 
   private $db;
   private $rid;

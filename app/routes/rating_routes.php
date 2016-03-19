@@ -1,11 +1,11 @@
 <?php
 
-use RamSources\ResourceLoaders\RatingLoader;
+use RamSources\Controllers\RatingController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 $app->group('/rating', function() use ($app, $dbconfig) {
-  $r = new RatingLoader($dbconfig);
+  $r = new RatingController($dbconfig);
   $app->post('/new', function (Request $request, Response $response, $args) use ($r) {
     $parsedData = $request->getParsedBody();
     $updateResponse = $r->setRating($parsedData);

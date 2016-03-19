@@ -1,12 +1,12 @@
 <?php
 
-use RamSources\ResourceLoaders\ResourceLoader;
+use RamSources\Controllers\ResourceController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 $app->group('/resource', function() use ($app, $dbconfig) {
 
-  $r = new ResourceLoader($dbconfig);
+  $r = new ResourceController($dbconfig);
 
   $app->get('/all', function (Request $request, Response $response, $args) use ($r) {
     $response->withStatus(200);

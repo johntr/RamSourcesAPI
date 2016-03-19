@@ -1,11 +1,11 @@
 <?php
 
 
-namespace RamSources\ResourceLoaders;
+namespace RamSources\Controllers;
 use RamSources\Database\Database;
-use RamSources\ResourceLoaders\CommentLoader;
+use RamSources\Controllers\CommentController;
 
-class ResourceLoader {
+class ResourceController {
 
   private $db; //current db connection
   private $dbconfig;
@@ -130,7 +130,7 @@ class ResourceLoader {
     $resourceData = $this->getResources($id);
     $resourceType = ucwords($resourceData['resource_type']);
 
-    $c = new CommentLoader($this->dbconfig);
+    $c = new CommentController($this->dbconfig);
     $commentData = $c->getCommentsByResource($id);
 
     $sql = "SELECT * FROM `$resourceType` WHERE resource_id = :id";

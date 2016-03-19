@@ -1,11 +1,11 @@
 <?php
 
-use RamSources\ResourceLoaders\CommentLoader;
+use RamSources\Controllers\CommentController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 $app->group('/comment', function() use ($app, $dbconfig) {
-  $c = new CommentLoader($dbconfig);
+  $c = new CommentController($dbconfig);
   $app->post('/new', function (Request $request, Response $response, $args) use ($c) {
     $parsedData = $request->getParsedBody();
     $updateResponse = $c->addComment($parsedData);
