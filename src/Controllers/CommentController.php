@@ -53,7 +53,7 @@ class CommentController {
       $this->conn->bind(':cid', $cid);
       $this->conn->execute();
       $this->conn->endTransaction();
-      $message = array('Result' => 'Success');
+      $message = array('Result' => 'Success', 'Message' => 'Removed comment ' . $cid);
       return $message;
     }
     catch(\PDOException $e) {
