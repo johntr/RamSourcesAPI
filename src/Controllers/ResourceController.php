@@ -149,10 +149,66 @@ class ResourceController {
     }
 
   }
+
+  function addResource($rawData) {
+    $data = array();
+    foreach($rawData as $k => $v) {
+      $type = substr($k,0,strpos($k,'_'));
+      $sub = substr($k,strpos($k,'_')+1);
+      $data[$type][$sub] = $v;
+
+    }
+
+    $resourceType = $data['resource']['resource_type'];
+    switch($resourceType) {
+      case 'bathroom':
+        $typeSQL = "INSERT INTO `Bathroom` (soap_type, dryer_type, num_stalls, num_urinals, sex, resource_id) VALUES (:soap_type, :dryer_type, :num_stalls, :num_urinals, :sex, :resource_id)";
+        break;
+      case 'vending':
+        $typeSQL = "INSERT INTO  `Vending` (pay_type, type, resource_id) VALUES (:pay_type, :type, :resource_id)";
+        break;
+      case 'water':
+        $typeSQL = "INSERT INTO `Water` (type, height, resource_id) VALUES (:type, :height, :resource_id)";
+        break;
+      default:
+        //if we don't get a good type return with a JSON error message.
+        $message = array('Result' => "FAILURE: Unable to determine resource type.");
+        return $message;
+    }
+
+    //build generic resource query.
+    $resourceSQL = "INSERT INTO `Resource` (building_id, resource_type, resource_name, floor) VALUES (:building_id, :resource_type, :resource_name, :floor)";
+
+    //Now that we have our 2 queries lets run them.
+    try {
+      $this->db->query($resourceSQL);
+      $this->db->beginTransaction();
+      $this->db->bind(':building_id', $data['resource']['building_id']);
+      $this->db->bind(':resource_type', $data['resource']['resource_type']);
+      $this->db->bind(':resource_name', $data['resource']['resource_name']);
+      $this->db->bind(':floor', $data['resource']['floor']);
+      $this->db->execute();
+
+      $rid = $this->db->lastInsertId();
+      $this->db->query($typeSQL);
+
+      $this->db->bind(':resource_id', $rid);
+      foreach($data[$type] as $k => $v) {
+        $this->db->bind(':'.$k, $v);
+      }
+
+      $this->db->execute();
+      $this->db->endTransaction();
+
+      $message = array('Result' => 'Success');
+      return $message;
+    } catch (\Exception $e) {
+      $this->db->cancelTransaction();
+      $message = array('Result' => $e->getMessage());
+      return $message;
+    }
+  }
   /**
-   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-   * UPDATE CALLS.
-   *
    * Function to update resources. THis will take a 2d array with resource_data and type_data elements.
    * @param $data
    * @return array
