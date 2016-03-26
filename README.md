@@ -1,6 +1,6 @@
 ### RamSources API
 
-You will need to do a `composer install` to get requirements installed.
+You will need to do a `composer install` to get requirements installed.   
 Run `composer dumpautoload` to update composer namespace after adding new classes.   
 
 The root of your project should include a config.php with the following array elements for DB connection.
@@ -29,7 +29,7 @@ $dbconfig['token'] = "";
 
 `api.ramsources.com/v1/comment/new`         *Takes form values and adds a new comment*  
 `api.ramsources.com/v1/comment/id/{id}`     *Returns comments based on resource id*  
-`api.ramsources.com/v1/comment/delete/{id}` *Delets comments on comment id*  
+`api.ramsources.com/v1/comment/delete/{id}` *Deletes comments on comment id*  
 
 `api.ramsources.com/v1/rating/new`      *Creates a new rating based on form values*  
 `api.ramsources.com/v1/rating/rid/{rid}`    *Returns rating info for a resource*  
