@@ -54,22 +54,8 @@ class ResourceController {
     $this->db->query($sql);
     $this->db->execute();
     $data = $this->db->results();
-    $buildings = array();
-    foreach ($data as $d) {
-      if(!empty($d['location'])) {
-        $coords = explode(',', $d['location']);
-        $d['lat'] = $coords[0];
-        $d['long'] = ltrim($coords[1]);
-      }
-      else {
-        $d['lat'] = NULL;
-        $d['long'] = NULL;
-      }
-      $buildings[] = $d;
-    }
-    unset($d);
+    $buildings = $this->_locationExplode($data);
     return $buildings;
-
   }
 
   /**
@@ -123,7 +109,9 @@ class ResourceController {
     $this->db->bind(':type', $type);
     $this->db->execute();
 
-    return $this->db->results();
+    $data = $this->db->results();
+    $output = $this->_locationExplode($data);
+    return $output;
   }
 
   function getResourceDetail($id) {
@@ -279,5 +267,23 @@ class ResourceController {
       $message = array('Result' => $e->getMessage());
     }
     return $message;
+  }
+
+  private function _locationExplode($data) {
+    $buildings = array();
+    foreach ($data as $d) {
+      if(!empty($d['location'])) {
+        $coords = explode(',', $d['location']);
+        $d['lat'] = $coords[0];
+        $d['long'] = ltrim($coords[1]);
+      }
+      else {
+        $d['lat'] = NULL;
+        $d['long'] = NULL;
+      }
+      $buildings[] = $d;
+    }
+    unset($d);
+    return $buildings;
   }
 }
