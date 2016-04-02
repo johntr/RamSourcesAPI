@@ -1,11 +1,13 @@
 <?php
 
 use RamSources\User\RamUser;
+use RamSources\User\RamVerification;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 $app->group('/user', function() use ($app, $dbconfig) {
   $u = new RamUser($dbconfig);
+  $v = new RamVerification($dbconfig);
   $app->get('/new/{user}/{pass}/{name}', function(Request $request, Response $response, $args) use ($u) {
     $user = $args['user'];
     $pass = $args['pass'];
@@ -43,6 +45,16 @@ $app->group('/user', function() use ($app, $dbconfig) {
       $response->getBody()->write(json_encode($status));
       $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
       return $newresponce;
+    }
+  });
+  $app->get('/test', function(Request $request, Response $response, $args) use ($u, $v) {
+    //$userInfo = array('name' =>"John", 'id' => 1, 'email' => 'jtredlich@gmail.com');
+    $id = $v->getIdFromHash('ed74fb06');
+    if (!is_array($id)) {
+      $u->verifyUser($id);
+    }
+    else {
+      print_r($id);
     }
   });
   /*
