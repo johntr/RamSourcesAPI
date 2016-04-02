@@ -2,6 +2,7 @@
 
 namespace RamSources\User;
 use RamSources\Database\Database;
+use RamSources\User\RamVerification;
 
 class RamUser {
 
@@ -33,6 +34,20 @@ class RamUser {
     $this->db->execute();
     return $this->db->lastInsertId();
 
+  }
+
+  public function verifyUser($id) {
+
+    $sql = "UPDATE `RamUsers` SET email_verified = '1' WHERE id = :id";
+    try {
+      $this->db->query($sql);
+      $this->db->bind(':id', $id);
+      $this->db->execute();
+      echo "User verified";
+    }
+    catch(\PDOException $e) {
+      echo $e->getMessage();
+    }
   }
 
   public function getUser($user) {
