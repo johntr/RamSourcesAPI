@@ -8,25 +8,37 @@ use Slim\Http\Response;
 $app->group('/user', function() use ($app, $dbconfig) {
   $u = new RamUser($dbconfig);
   $v = new RamVerification($dbconfig);
+
   $app->get('/new/{user}/{pass}/{name}', function(Request $request, Response $response, $args) use ($u) {
     $user = $args['user'];
     $pass = $args['pass'];
     $rname = explode("-", $args['name']);
     $name = $rname[0] . " " . $rname[1];
-    try {
-      $u->createUser($user, $pass, $name);
-      $response->withStatus(200);
-      $status = ['result' => 'Success', 'message' => 'User has been created'];
-      $response->getBody()->write(json_encode($status));
+    $userDomain = explode('@', $user);
+
+    if ($userDomain[1] == "farmingdale.edu") {
+      try {
+        $u->createUser($user, $pass, $name);
+        $response->withStatus(200);
+        $status = ['result' => 'Success', 'message' => 'User has been created'];
+        $response->getBody()->write(json_encode($status));
+      } catch (PDOException $e) {
+        $response->withStatus(500);
+        $status = ['result' => 'Fail', 'message' => $e->getMessage()];
+        $response->getBody()->write(json_encode($status));
+        $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+        return $newresponce;
+      }
     }
-    catch(PDOException $e) {
-      $response->withStatus(500);
-      $status = ['result' => 'Fail', 'message' => $e->getMessage()];
+    else {
+      $response->withStatus(401);
+      $status = ['result' => 'Fail', 'message' => 'RamSources for SUNY Farmingdale students only, Farmingdale.edu email required.'];
       $response->getBody()->write(json_encode($status));
       $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
       return $newresponce;
     }
   });
+
   $app->get('/login', function(Request $request, Response $response, $args) use ($u) {
     $authHeader = $request->getHeader('Authorization');
     $userInfo = $u->decodeHeader($authHeader[0]);
@@ -47,6 +59,7 @@ $app->group('/user', function() use ($app, $dbconfig) {
       return $newresponce;
     }
   });
+
   $app->get('/test', function(Request $request, Response $response, $args) use ($u, $v) {
     //$userInfo = array('name' =>"John", 'id' => 1, 'email' => 'jtredlich@gmail.com');
     $id = $v->getIdFromHash('ed74fb06');

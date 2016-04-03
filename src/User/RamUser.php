@@ -15,9 +15,11 @@ class RamUser {
 
   private $cost = 10;
   private $db;
+  private $emailV;
 
   function __construct($dbconfig) {
     $this->db = new Database($dbconfig);
+    $this->emailV = new RamVerification($dbconfig);
   }
 
   public function createUser($user, $password, $name = NULL) {
@@ -32,7 +34,11 @@ class RamUser {
     $this->db->bind(':pass', $hashedpass);
     $this->db->bind(':name', $this->name);
     $this->db->execute();
-    return $this->db->lastInsertId();
+    $id = $this->db->lastInsertId();
+    //start user email verification. 
+    $userInfo = array('id' => $id, 'name' => $this->name, 'email' => $this->user);
+    $this->emailV->sendVerify($userInfo);
+    return $id;
 
   }
 
