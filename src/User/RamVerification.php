@@ -1,13 +1,16 @@
 <?php
 
 namespace RamSources\User;
-use RamSources\Database\Database;
+use RamSources\Utils\Database;
+use RamSources\Utils\Logging;
 use PHPMailer;
+
 
 class RamVerification {
 
 
   private $db;
+  private $log;
   private $mail;
   private $hash;
   private $userInfo = array();
@@ -15,6 +18,7 @@ class RamVerification {
   function __construct($dbconfig) {
 
     $this->db = new Database($dbconfig);
+    $this->log = new Logging();
     $this->mail = new PHPMailer();
 
     $this->mail->Host = 'localhost';
@@ -35,15 +39,15 @@ class RamVerification {
       $this->db->bind(':vhash', $this->hash);
       $this->db->bind(':id', $this->userInfo['id']);
       $this->db->bind(':status', 0);
-      //$this->db->execute();
+      $this->db->execute();
 
       $this->sendVerifyMail();
     }
     catch(\PDOException $e) {
-      echo $e->getMessage();
+      $this->log->logError($e->getMessage());
     }
     catch(\Exception $e) {
-      echo $e->getMessage();
+      $this->log->logError($e->getMessage());
     }
   }
 
@@ -84,7 +88,8 @@ class RamVerification {
         return $userID['user_id'];
       }
       else {
-        return array('Result' => 'Fail', "Message" => "Hash already used");
+        $this->log->logError("Fail: Hash already used");
+        return array('result' => 'Fail', "message" => "Hash already used");
       }
     }
     catch(\PDOException $e) {

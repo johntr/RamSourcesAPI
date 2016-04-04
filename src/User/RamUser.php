@@ -1,7 +1,7 @@
 <?php
 
 namespace RamSources\User;
-use RamSources\Database\Database;
+use RamSources\Utils\Database;
 use RamSources\User\RamVerification;
 
 class RamUser {
@@ -49,7 +49,7 @@ class RamUser {
       $this->db->query($sql);
       $this->db->bind(':id', $id);
       $this->db->execute();
-      echo "User verified";
+      return array('result' => 'Success', 'message' => 'User Verified');
     }
     catch(\PDOException $e) {
       echo $e->getMessage();

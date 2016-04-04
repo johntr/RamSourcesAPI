@@ -60,14 +60,23 @@ $app->group('/user', function() use ($app, $dbconfig) {
     }
   });
 
-  $app->get('/test', function(Request $request, Response $response, $args) use ($u, $v) {
-    //$userInfo = array('name' =>"John", 'id' => 1, 'email' => 'jtredlich@gmail.com');
-    $id = $v->getIdFromHash('ed74fb06');
-    if (!is_array($id)) {
-      $u->verifyUser($id);
+  $app->put('/userverify', function(Request $request, Response $response, $args) use ($u, $v) {
+    $info = $request->getQueryParams();
+    $hash = $info['id'];
+    $idReturn = $v->getIdFromHash($hash);
+    if (!is_array($idReturn)) {
+      $message = $u->verifyUser($idReturn);
+
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($message));
+      $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newresponce;
     }
     else {
-      print_r($id);
+      $response->withStatus(500);
+      $response->getBody()->write(json_encode($idReturn));
+      $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newresponce;
     }
   });
   /*
