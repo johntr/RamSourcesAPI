@@ -1,6 +1,6 @@
 <?php
 
-namespace RamSources\Database;
+namespace RamSources\Utils;
 
 use \PDO;
 
