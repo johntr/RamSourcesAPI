@@ -1,7 +1,7 @@
 <?php
 
 namespace RamSources\Controllers;
-use RamSources\Database\Database;
+use RamSources\Utils\Database;
 
 class RatingController {
 

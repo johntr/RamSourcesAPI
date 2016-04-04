@@ -2,7 +2,7 @@
 
 
 namespace RamSources\Controllers;
-use RamSources\Database\Database;
+use RamSources\Utils\Database;
 use RamSources\Controllers\CommentController;
 
 class ResourceController {
