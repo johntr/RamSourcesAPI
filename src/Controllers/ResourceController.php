@@ -3,6 +3,7 @@
 
 namespace RamSources\Controllers;
 use RamSources\Utils\Database;
+use RamSources\Controllers\InventoryController;
 use RamSources\Controllers\CommentController;
 
 class ResourceController {
@@ -121,6 +122,11 @@ class ResourceController {
     $c = new CommentController($this->dbconfig);
     $commentData = $c->getCommentsByResource($id);
 
+    if($resourceType == 'Vending') {
+      $inv = new InventoryController($this->dbconfig);
+      $inventoryData = $inv->getInventoryById($id);
+    }
+
     $sql = "SELECT * FROM `$resourceType` WHERE resource_id = :id";
     try {
       $this->db->query($sql);
@@ -128,6 +134,9 @@ class ResourceController {
       $this->db->execute();
       $resourceTypeData = $this->db->single();
       $returnDta['resource'] = array_merge($resourceData, $resourceTypeData);
+      if(isset($inventoryData)) {
+        $returnDta['inventory'] = $inventoryData['message'];
+      }
       $returnDta['comments'] = $commentData;
       return $returnDta;
     }
