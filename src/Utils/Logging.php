@@ -16,9 +16,12 @@ class Logging {
     $this->stream = new StreamHandler($_SERVER['DOCUMENT_ROOT'] . '/logs/RamLogs.log', Logger::WARNING);
     $this->log->pushHandler($this->stream);
   }
+  
+  function logNotification($message) {
+    $this->log->addNotice($message);
+  }
 
   function logWarning($message) {
-    
     $this->log->addWarning($message);
   }
 

@@ -14,7 +14,6 @@ class Database {
   private $pass;
 
   private $stmt;
-  protected $error;
 
 
   function __construct($dbconfig) {
