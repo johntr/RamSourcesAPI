@@ -64,7 +64,7 @@ class RamVerification {
       throw new \Exception($this->mail->ErrorInfo);
     }
     else {
-      echo "Sent";
+      $this->log->logNotification("Sent email to {$this->userInfo['email']}.");
     }
   }
 
