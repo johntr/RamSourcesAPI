@@ -112,6 +112,13 @@ class ResourceController {
 
     $data = $this->db->results();
     $output = $this->_locationExplode($data);
+    if($type = 'vending') {
+      $v = new InventoryController($this->dbconfig);
+      for ($i = 0; $i < count($output); $i++) {
+        $inv = $v->getInventoryById($output[$i]['resource_id']);
+        $output[$i]['inventory'] = $inv['message'];
+      }
+    }
     return $output;
   }
 
