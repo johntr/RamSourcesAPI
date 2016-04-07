@@ -127,7 +127,7 @@ class RamUser {
   }
 
   public function verifyPass($tryUser, $tryPass) {
-    $sql = "SELECT pass FROM `Ramusers` WHERE user = :user LIMIT 1";
+    $sql = "SELECT pass FROM `RamUsers` WHERE user = :user LIMIT 1";
     $this->db->query($sql);
     $this->db->bind(':user', $tryUser);
     $this->db->execute();
