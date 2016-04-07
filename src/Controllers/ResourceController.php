@@ -69,9 +69,16 @@ class ResourceController {
               ON T1.building_id = T2.building_id
               WHERE T1.building_id = :bid";
     $this->db->query($sql);
-    $this->db->bind(':bid', $bid);
-    $this->db->execute();
-    return $this->db->results();
+
+    try {
+      $this->db->bind(':bid', $bid);
+      $this->db->execute();
+      $data = $this->db->results();
+      return count($data)>0 ? $data : array('result' => 'Failure', 'message' => 'No Resource for that building');
+    } catch (\PDOException $e) {
+      //@TODO log message.
+      return array('result' => 'Failure', 'message' => $e->getMessage());
+    }
   }
 
   /**
