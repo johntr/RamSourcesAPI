@@ -3,6 +3,7 @@
 namespace RamSources\User;
 use RamSources\Utils\Database;
 use RamSources\User\RamVerification;
+use RamSources\Utils\Logging;
 
 class RamUser {
 
@@ -15,11 +16,13 @@ class RamUser {
 
   private $cost = 10;
   private $db;
+  private $log;
   private $emailV;
 
   function __construct($dbconfig) {
     $this->db = new Database($dbconfig);
     $this->emailV = new RamVerification($dbconfig);
+    $this->log = new Logging();
   }
 
   public function createUser($user, $password, $name = NULL) {
@@ -29,16 +32,27 @@ class RamUser {
 
     $sql = "INSERT INTO `RamUsers` (user, pass, name) VALUES (:user, :pass, :name)";
     $this->db->query($sql);
-    $hashedpass = $this->_create_hash();
-    $this->db->bind(':user', $this->user);
-    $this->db->bind(':pass', $hashedpass);
-    $this->db->bind(':name', $this->name);
-    $this->db->execute();
-    $id = $this->db->lastInsertId();
-    //start user email verification. 
-    $userInfo = array('id' => $id, 'name' => $this->name, 'email' => $this->user);
-    $this->emailV->sendVerify($userInfo);
-    return $id;
+    try {
+      $hashedpass = $this->_create_hash();
+      $this->db->bind(':user', $this->user);
+      $this->db->bind(':pass', $hashedpass);
+      $this->db->bind(':name', $this->name);
+      $this->db->execute();
+      $id = $this->db->lastInsertId();
+      //start user email verification.
+      $userInfo = array(
+        'id' => $id,
+        'name' => $this->name,
+        'email' => $this->user
+      );
+      $this->emailV->sendVerify($userInfo);
+      $this->log->logNotification($userInfo);
+      return $id;
+    } catch (\PDOException $e) {
+      $return = array('result'=>'Fail', "message" => "User password not verified");
+      $this->log->logError($return);
+      return $return;
+    }
 
   }
 
