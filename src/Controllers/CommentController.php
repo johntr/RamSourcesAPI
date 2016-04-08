@@ -22,7 +22,9 @@ class CommentController {
     $this->conn->bind(':rid', $rid);
     $this->conn->execute();
 
-    return $this->conn->results();
+    $output = $this->conn->results();
+
+    return $output ? $output : array('result' => 'Failure' , 'message' => 'There are no comments for this resource');
   }
 
   function addComment($data) {
@@ -37,7 +39,7 @@ class CommentController {
       $this->conn->bind(':dates', $date);
       $this->conn->execute();
       $id = $this->conn->lastInsertId();
-      $message = array('result' => 'Success', 'message' => 'Comment id ' . $id . 'has been posted.');
+      $message = array('result' => 'Success', 'message' => 'Comment id ' . $id . ' has been posted.');
       return $message;
     } catch (\PDOException $e) {
       $message = array('result' => 'Failure' , 'message' => $e->getMessage());
