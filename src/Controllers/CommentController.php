@@ -2,14 +2,17 @@
 
 namespace RamSources\Controllers;
 use RamSources\Utils\Database;
+use RamSources\Utils\Logging;
 
 class CommentController {
 
   private $conn;
+  private $log;
 
   function __construct($dbconfig) {
 
     $this->conn = new Database($dbconfig);
+    $this->log = new Logging();
   }
 
   function getCommentsByResource($rid) {
@@ -33,12 +36,12 @@ class CommentController {
       $date = date('Y-m-d H:i:s', strtotime('now'));
       $this->conn->bind(':dates', $date);
       $this->conn->execute();
-
-      $message = array('Result' => $this->conn->lastInsertId());
+      $id = $this->conn->lastInsertId();
+      $message = array('result' => 'Success', 'message' => 'Comment id ' . $id . 'has been posted.');
       return $message;
     } catch (\PDOException $e) {
-
-      $message = array('Result' => $e->getMessage());
+      $message = array('result' => 'Failure' , 'message' => $e->getMessage());
+      $this->log->logError($message);
       return $message;
     }
 
@@ -53,12 +56,13 @@ class CommentController {
       $this->conn->bind(':cid', $cid);
       $this->conn->execute();
       $this->conn->endTransaction();
-      $message = array('Result' => 'Success', 'Message' => 'Removed comment ' . $cid);
+      $message = array('result' => 'Success', 'message' => 'Removed comment ' . $cid);
       return $message;
     }
     catch(\PDOException $e) {
       $this->conn->cancelTransaction();
-      $message = array('Result' => $e->getMessage());
+      $message = array('result' => 'Failure' , 'message' => $e->getMessage());
+      $this->log->logError($message);
       return $message;
     }
 
