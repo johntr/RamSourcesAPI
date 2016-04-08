@@ -141,7 +141,10 @@ class ResourceController {
 
     $c = new CommentController($this->dbconfig);
     $commentData = $c->getCommentsByResource($id);
-
+    //remove comment if we do not get any. 
+    if (isset($commentData['result'])) {
+      unset($commentData);
+    }
     if($resourceType == 'Vending') {
       $inv = new InventoryController($this->dbconfig);
       $inventoryData = $inv->getInventoryById($id);
