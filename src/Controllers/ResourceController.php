@@ -3,6 +3,7 @@
 
 namespace RamSources\Controllers;
 use RamSources\Utils\Database;
+use RamSources\Controllers\RatingController;
 use RamSources\Controllers\InventoryController;
 use RamSources\Controllers\CommentController;
 
@@ -119,12 +120,17 @@ class ResourceController {
 
     $data = $this->db->results();
     $output = $this->_locationExplode($data);
-    if($type = 'vending') {
-      $v = new InventoryController($this->dbconfig);
-      for ($i = 0; $i < count($output); $i++) {
+
+    $v = new InventoryController($this->dbconfig);
+    $r = new RatingController($this->dbconfig);
+
+    for ($i = 0; $i < count($output); $i++) {
+      if($type == 'vending') {
         $inv = $v->getInventoryById($output[$i]['resource_id']);
         $output[$i]['inventory'] = $inv['message'];
       }
+      $rat = $r->getRatingDetail($output[$i]['resource_id']);
+      $output[$i]['rating'] = $rat;
     }
     return $output;
   }
