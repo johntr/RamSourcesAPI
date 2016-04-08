@@ -141,7 +141,7 @@ class ResourceController {
 
     $c = new CommentController($this->dbconfig);
     $commentData = $c->getCommentsByResource($id);
-    //remove comment if we do not get any. 
+    //remove comment if we do not get any.
     if (isset($commentData['result'])) {
       unset($commentData);
     }

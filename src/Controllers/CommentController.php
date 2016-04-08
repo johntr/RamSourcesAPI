@@ -1,6 +1,7 @@
 <?php
 
 namespace RamSources\Controllers;
+use RamSources\User\RamUser;
 use RamSources\Utils\Database;
 use RamSources\Utils\Logging;
 
@@ -8,23 +9,37 @@ class CommentController {
 
   private $conn;
   private $log;
+  private $user;
 
   function __construct($dbconfig) {
 
     $this->conn = new Database($dbconfig);
     $this->log = new Logging();
+    $this->user = new RamUser($dbconfig);
   }
 
   function getCommentsByResource($rid) {
     $sql = "SELECT * From `Comments` WHERE resource_id = :rid";
 
-    $this->conn->query($sql);
-    $this->conn->bind(':rid', $rid);
-    $this->conn->execute();
+    try {
+      $this->conn->query($sql);
+      $this->conn->bind(':rid', $rid);
+      $this->conn->execute();
 
-    $output = $this->conn->results();
+      $output = $this->conn->results();
+      $name = $this->user->getUserName($output[0]['user_id']);
+      $output[0]['user_id'] = $name['name'];
 
-    return $output ? $output : array('result' => 'Failure' , 'message' => 'There are no comments for this resource');
+      return $output ? $output : array(
+        'result' => 'Failure',
+        'message' => 'There are no comments for this resource'
+      );
+    } catch (\PDOException $e) {
+      return array(
+        'result' => 'Failure',
+        'message' => $e->getMessage()
+      );
+    }
   }
 
   function addComment($data) {

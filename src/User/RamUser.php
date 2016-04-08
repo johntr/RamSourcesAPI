@@ -93,6 +93,21 @@ class RamUser {
     }
   }
 
+  public function getUserName($id) {
+    $sql = "SELECT name FROM `RamUsers` WHERE id = :id";
+
+    try {
+      $this->db->query($sql);
+      $this->db->bind(':id', $id);
+      $this->db->execute();
+      return $this->db->single();
+    }
+    catch (\PDOException $e) {
+      //@TODO Log error
+      return "---";
+    }
+  }
+
   public function createUserToken() {
     $token = $this->_generate_token();
     $tokenexp = date('Y-m-d H:i:s', strtotime('+1 year'));
