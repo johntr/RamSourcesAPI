@@ -4,8 +4,8 @@ use RamSources\Controllers\RatingController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$app->group('/rating', function() use ($app, $dbconfig) {
-  $r = new RatingController($dbconfig);
+$app->group('/rating', function() use ($app, $container) {
+  $r = $container['ratings'];
   $app->post('/new', function (Request $request, Response $response, $args) use ($r) {
     $parsedData = $request->getParsedBody();
     $updateResponse = $r->setRating($parsedData);

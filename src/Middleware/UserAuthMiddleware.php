@@ -2,21 +2,19 @@
 
 namespace RamSources\Middleware;
 
-use \RamSources\User\RamUser;
-
 class UserAuthMiddleware {
 
   private $tokenAuth;
   private $u;
-  private $dbconfig;
+  private $c;
 
-  function __construct($dbconfig) {
-    $this->dbconfig = $dbconfig;
+  function __construct($container) {
+    $this->c = $container;
   }
 
   function __invoke($request, $response, $next) {
     $this->tokenAuth = $request->getHeader('Authorization');
-    $this->u = new RamUser($this->dbconfig);
+    $this->u = $this->c['user'];
     $decodeAuth = $this->u->decodeHeader($this->tokenAuth[0]);
     $this->u->getUser($decodeAuth[0]);
     if($this->u->verifyToken($decodeAuth[1])) {

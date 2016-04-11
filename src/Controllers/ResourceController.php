@@ -2,20 +2,16 @@
 
 
 namespace RamSources\Controllers;
-use RamSources\Utils\Database;
-use RamSources\Controllers\RatingController;
-use RamSources\Controllers\InventoryController;
-use RamSources\Controllers\CommentController;
 
 class ResourceController {
 
   private $db; //current db connection
-  private $dbconfig;
+  private $c;
 
-  function __construct($dbconfig) {
+  function __construct($container) {
     //set connections to db
-    $this->dbconfig = $dbconfig;
-    $this->db = new Database($dbconfig);
+    $this->c = $container;
+    $this->db = $container['database'];
   }
 
   /**
@@ -121,8 +117,8 @@ class ResourceController {
     $data = $this->db->results();
     $output = $this->_locationExplode($data);
 
-    $v = new InventoryController($this->dbconfig);
-    $r = new RatingController($this->dbconfig);
+    $v = $this->c['inventory'];
+    $r = $this->c['ratings'];
 
     for ($i = 0; $i < count($output); $i++) {
       if($type == 'vending') {
@@ -139,14 +135,14 @@ class ResourceController {
     $resourceData = $this->getResources($id);
     $resourceType = ucwords($resourceData['resource_type']);
 
-    $c = new CommentController($this->dbconfig);
+    $c = $this->c['comments'];
     $commentData = $c->getCommentsByResource($id);
     //remove comment if we do not get any.
     if (isset($commentData['result'])) {
       unset($commentData);
     }
     if($resourceType == 'Vending') {
-      $inv = new InventoryController($this->dbconfig);
+      $inv = $this->c['inventory'];
       $inventoryData = $inv->getInventoryById($id);
     }
 

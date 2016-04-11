@@ -1,14 +1,12 @@
 <?php
 require 'vendor/autoload.php';
-require 'config.php';
+require 'container.php';
 
-use RamSources\Middleware\UserAuthMiddleware;
-use RamSources\Middleware\AppAuthMiddleware;
 
 $app = new \Slim\App();
-$app->add(new AppAuthMiddleware($dbconfig));
+$app->add($container['auth_middle']);
 
-$app->group('/v1', function() use ($app,$dbconfig) {
+$app->group('/v1', function() use ($app, $container) {
 
   require 'app/routes/resource_routes.php';
   require 'app/routes/building_routes.php';

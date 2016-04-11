@@ -1,8 +1,7 @@
 <?php
 
 namespace RamSources\User;
-use RamSources\Utils\Database;
-use RamSources\Utils\Logging;
+
 use PHPMailer;
 
 
@@ -15,10 +14,10 @@ class RamVerification {
   private $hash;
   private $userInfo = array();
 
-  function __construct($dbconfig) {
+  function __construct($container) {
 
-    $this->db = new Database($dbconfig);
-    $this->log = new Logging();
+    $this->db = $container['database'];
+    $this->log = $container['logs'];
     $this->mail = new PHPMailer();
 
     $this->mail->Host = 'localhost';

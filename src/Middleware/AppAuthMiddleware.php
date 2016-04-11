@@ -7,8 +7,8 @@ class AppAuthMiddleware {
   private $serverToken;
   private $tokenAuth;
 
-  function __construct($dbconfig) {
-    $this->serverToken = $dbconfig['token'];
+  function __construct($container) {
+    $this->serverToken = $container['dbconfig']['token'];
   }
 
   function __invoke($request, $response, $next) {

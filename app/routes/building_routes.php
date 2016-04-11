@@ -4,8 +4,8 @@ use RamSources\Controllers\ResourceController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$app->group('/building', function() use ($app, $dbconfig) {
-  $r = new ResourceController($dbconfig);
+$app->group('/building', function() use ($app, $container) {
+  $r = $container['resources'];
   $app->get('/all', function(Request $request, Response $response, $args) use ($r) {
 
     $response->withStatus(200);

@@ -1,9 +1,5 @@
 <?php
-
 namespace RamSources\Controllers;
-use RamSources\User\RamUser;
-use RamSources\Utils\Database;
-use RamSources\Utils\Logging;
 
 class CommentController {
 
@@ -11,11 +7,10 @@ class CommentController {
   private $log;
   private $user;
 
-  function __construct($dbconfig) {
-
-    $this->conn = new Database($dbconfig);
-    $this->log = new Logging();
-    $this->user = new RamUser($dbconfig);
+  function __construct($container) {
+    $this->conn = $container['database'];
+    $this->log = $container['logs'];
+    $this->user = $container['user'];
   }
 
   function getCommentsByResource($rid) {

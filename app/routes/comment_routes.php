@@ -1,11 +1,10 @@
 <?php
 
-use RamSources\Controllers\CommentController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$app->group('/comment', function() use ($app, $dbconfig) {
-  $c = new CommentController($dbconfig);
+$app->group('/comment', function() use ($app, $container) {
+  $c = $container['comments'];
   
   $app->post('/new', function (Request $request, Response $response, $args) use ($c) {
     $parsedData = $request->getParsedBody();

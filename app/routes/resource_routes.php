@@ -1,12 +1,11 @@
 <?php
 
-use RamSources\Controllers\ResourceController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$app->group('/resource', function() use ($app, $dbconfig) {
+$app->group('/resource', function() use ($app, $container) {
 
-  $r = new ResourceController($dbconfig);
+  $r = $container['resources'];
 
   $app->get('/all', function (Request $request, Response $response, $args) use ($r) {
     $response->withStatus(200);

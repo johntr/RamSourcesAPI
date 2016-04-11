@@ -1,8 +1,6 @@
 <?php
 namespace RamSources\Controllers;
 
-use RamSources\Utils\Database;
-use RamSources\Utils\Logging;
 
 class InventoryController {
 
@@ -10,9 +8,9 @@ class InventoryController {
   private $log;
 
 
-  function __construct($dbconfig) {
-    $this->db = new Database($dbconfig);
-    $this->log = new Logging();
+  function __construct($container) {
+    $this->db = $container['database'];
+    $this->log = $container['logs'];
   }
 
   function getInventoryById($id) {

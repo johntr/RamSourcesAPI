@@ -1,15 +1,14 @@
 <?php
 
 namespace RamSources\Controllers;
-use RamSources\Utils\Database;
 
 class RatingController {
 
   private $db;
   private $rid;
 
-  function __construct($dbconfig) {
-    $this->db = new Database($dbconfig);
+  function __construct($container) {
+    $this->db = $container['database'];
   }
 
   function setRating($data) {

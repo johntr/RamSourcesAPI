@@ -5,9 +5,9 @@ use RamSources\User\RamVerification;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-$app->group('/user', function() use ($app, $dbconfig) {
-  $u = new RamUser($dbconfig);
-  $v = new RamVerification($dbconfig);
+$app->group('/user', function() use ($app, $container) {
+  $u = $container['user'];
+  $v = $container['user_verify'];
 
 
   $app->get('/login', function(Request $request, Response $response, $args) use ($u) {

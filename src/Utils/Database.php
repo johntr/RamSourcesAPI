@@ -4,7 +4,6 @@ namespace RamSources\Utils;
 
 use \PDO;
 
-
 class Database {
 
   private $conn;

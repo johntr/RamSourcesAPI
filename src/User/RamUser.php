@@ -1,9 +1,6 @@
 <?php
 
 namespace RamSources\User;
-use RamSources\Utils\Database;
-use RamSources\User\RamVerification;
-use RamSources\Utils\Logging;
 
 class RamUser {
 
@@ -19,10 +16,10 @@ class RamUser {
   private $log;
   private $emailV;
 
-  function __construct($dbconfig) {
-    $this->db = new Database($dbconfig);
-    $this->emailV = new RamVerification($dbconfig);
-    $this->log = new Logging();
+  function __construct($container) {
+    $this->db = $container['database'];
+    $this->emailV = $container['user_verify'];
+    $this->log = $container['logs'];
   }
 
   public function createUser($user, $password, $name = NULL) {
