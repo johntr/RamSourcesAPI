@@ -9,12 +9,20 @@ $app->group('/comment', function() use ($app, $dbconfig) {
   
   $app->post('/new', function (Request $request, Response $response, $args) use ($c) {
     $parsedData = $request->getParsedBody();
-    $updateResponse = $c->addComment($parsedData);
 
-    $response->withStatus(200);
-    $response->getBody()->write(json_encode($updateResponse));
-    $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
-    return $newResponse;
+    if (!empty($parsedData['comment'])) {
+      $updateResponse = $c->addComment($parsedData);
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($updateResponse));
+      $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newResponse;
+    }
+    else {
+      $response->withStatus(400);
+      $response->getBody()->write(json_encode(array("result" => 'Failure', "message" => "Empty comments are not accepted.")));
+      $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+      return $newResponse;
+    }
   });
   
   $app->get('/id/{id}', function (Request $request, Response $response, $args) use ($c) {
