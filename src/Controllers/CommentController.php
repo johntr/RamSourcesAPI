@@ -19,7 +19,7 @@ class CommentController {
   }
 
   function getCommentsByResource($rid) {
-    $sql = "SELECT * From `Comments` WHERE resource_id = :rid";
+    $sql = "SELECT * From `Comments` WHERE resource_id = :rid AND parent_comment = 0";
 
     try {
       $this->conn->query($sql);
@@ -27,8 +27,13 @@ class CommentController {
       $this->conn->execute();
 
       $output = $this->conn->results();
-      $name = $this->user->getUserName($output[0]['user_id']);
-      $output[0]['user_id'] = $name['name'];
+
+      //Loop through our comments and add real username and child comments(if any).
+      for($i=0;$i < count($output);$i++) {
+        $name = $this->user->getUserName($output[$i]['user_id']);
+        $output[$i]['user_id'] = $name['name'];
+        $output[$i]['child_comments'] = $this->getChildComments($output[$i]['comment_id']);
+      }
 
       return $output ? $output : array(
         'result' => 'Failure',
@@ -39,6 +44,24 @@ class CommentController {
         'result' => 'Failure',
         'message' => $e->getMessage()
       );
+    }
+  }
+
+  function getChildComments($pid) {
+    $sql = "SELECT * FROM `Comments` WHERE parent_comment = :pid";
+
+    try {
+      $this->conn->query($sql);
+      $this->conn->bind(':pid', $pid);
+      $this->conn->execute();
+      $results = $this->conn->results();
+      for($i=0;$i<count($results);$i++) {
+        $name = $this->user->getUserName($results[$i]['user_id']);
+        $results[$i]['user_id'] = $name['name'];
+      }
+      return $results;
+    } catch (\PDOException $e) {
+      $this->log->logError($e->getMessage());
     }
   }
 
