@@ -38,9 +38,9 @@ $container['inventory'] = function ($c) {
 };
 
 //Users
-$container['user'] = function ($c) {
+$container['user'] = $container->factory(function ($c) {
   return new \RamSources\User\RamUser($c);
-};
-$container['user_verify'] = function ($c) {
+});
+$container['user_verify'] = $container->factory(function ($c) {
   return new \RamSources\User\RamVerification($c);
-};
+});
