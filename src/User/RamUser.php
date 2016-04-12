@@ -27,30 +27,38 @@ class RamUser {
     $this->password = $password;
     $this->name = $name;
 
-    $sql = "INSERT INTO `RamUsers` (user, pass, name) VALUES (:user, :pass, :name)";
-    $this->db->query($sql);
-    try {
-      $hashedpass = $this->_create_hash();
-      $this->db->bind(':user', $this->user);
-      $this->db->bind(':pass', $hashedpass);
-      $this->db->bind(':name', $this->name);
-      $this->db->execute();
-      $id = $this->db->lastInsertId();
-      //start user email verification.
-      $userInfo = array(
-        'id' => $id,
-        'name' => $this->name,
-        'email' => $this->user
-      );
-      $this->emailV->sendVerify($userInfo);
-      $this->log->logNotification($userInfo);
-      return $id;
-    } catch (\PDOException $e) {
-      $return = array('result'=>'Fail', "message" => "User password not verified");
-      $this->log->logError($return);
-      return $return;
+    if($this->checkDupUser($this->user)) {
+      return array("result"=>"Fail", "message" => "User with email $user already registered");
     }
-
+    else {
+      $sql = "INSERT INTO `RamUsers` (user, pass, name) VALUES (:user, :pass, :name)";
+      $this->db->query($sql);
+      try {
+        $hashedpass = $this->_create_hash();
+        $this->db->bind(':user', $this->user);
+        $this->db->bind(':pass', $hashedpass);
+        $this->db->bind(':name', $this->name);
+        $this->db->execute();
+        $id = $this->db->lastInsertId();
+        //start user email verification.
+        $userInfo = array(
+          'id' => $id,
+          'name' => $this->name,
+          'email' => $this->user
+        );
+        $this->emailV->sendVerify($userInfo);
+        $this->log->logNotification($userInfo);
+        $status = array ('result' => 'Success', 'message' => "User {$this->name} has been created");
+        return $status;
+      } catch (\PDOException $e) {
+        $return = array(
+          'result' => 'Fail',
+          "message" => "User password not verified"
+        );
+        $this->log->logError($return);
+        return $return;
+      }
+    }
   }
 
   public function verifyUser($id) {
@@ -150,6 +158,20 @@ class RamUser {
     } else {
       $this->verified = FALSE;
       throw new \Exception("Wrong Password");
+    }
+  }
+
+  public function checkDupUser($user) {
+    $sql = "SELECT 1 FROM `RamUsers` WHERE user = :user";
+
+    try {
+      $this->db->query($sql);
+      $this->db->bind(':user', $user);
+      $this->db->execute();
+      return $this->db->single();
+
+    } catch(\PDOException $e) {
+
     }
   }
 
