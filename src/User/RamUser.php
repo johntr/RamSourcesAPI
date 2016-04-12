@@ -53,7 +53,7 @@ class RamUser {
       } catch (\PDOException $e) {
         $return = array(
           'result' => 'Fail',
-          "message" => "User password not verified"
+          "message" => $e->getMessage()
         );
         $this->log->logError($return);
         return $return;
@@ -87,7 +87,7 @@ class RamUser {
       echo $e;
     }
     if(isset($userInfo)) {
-      //print_r($userInfo);
+
       $this->user = $userInfo[0]['user'];
       $this->password = $userInfo[0]['pass'];
       $this->name = $userInfo[0]['name'];
