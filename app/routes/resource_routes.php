@@ -41,6 +41,15 @@ $app->group('/resource', function() use ($app, $container) {
     $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
     return $newResponse;
   });
+  $app->get('/report/id/{id}', function(Request $request, Response $response, $args) use ($r) {
+    $id = $args['id'];
+
+    $response->withStatus(200);
+    $response->getBody()->write(json_encode($r->reportResource($id)));
+    $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
+    return $newResponse;
+  });
+
   
   $app->post('/new', function (Request $request, Response $response, $args) use ($r) {
     $parsedData = $request->getParsedBody();
