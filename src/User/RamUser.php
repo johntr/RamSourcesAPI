@@ -16,12 +16,23 @@ class RamUser {
   private $log;
   private $emailV;
 
+  /**
+   * RamUser constructor. Pass the DI container to class.
+   * @param $container
+   */
   function __construct($container) {
     $this->db = $container['database'];
     $this->emailV = $container['user_verify'];
     $this->log = $container['logs'];
   }
 
+  /**
+   * This method will check for a duplicate user and create a new user if it doesn't exist.
+   * @param $user  - user email
+   * @param $password - password
+   * @param null $name - optional user name.
+   * @return array - array with message info back.
+   */
   public function createUser($user, $password, $name = NULL) {
     $this->user = $user;
     $this->password = $password;
@@ -53,6 +64,11 @@ class RamUser {
 
   }
 
+  /**
+   * Function to verify user's email address
+   * @param $id
+   * @return array - array with message info back.
+   */
   public function verifyUser($id) {
 
     $sql = "UPDATE `RamUsers` SET email_verified = '1' WHERE id = :id";
@@ -67,6 +83,11 @@ class RamUser {
     }
   }
 
+  /**
+   * Function that returns user info in an array.
+   * @param $user
+   * @throws \Exception
+   */
   public function getUser($user) {
     $sql = "SELECT * FROM `RamUsers` WHERE user = :user";
     try{
@@ -90,6 +111,11 @@ class RamUser {
     }
   }
 
+  /**
+   * Function returns users name based on their id.
+   * @param $id
+   * @return string
+   */
   public function getUserName($id) {
     $sql = "SELECT name FROM `RamUsers` WHERE id = :id";
 
@@ -105,6 +131,10 @@ class RamUser {
     }
   }
 
+  /**
+   * Generates user token with exp date. returns the id and generated token of the user.
+   * @return array
+   */
   public function createUserToken() {
     $token = $this->_generate_token();
     $tokenexp = date('Y-m-d H:i:s', strtotime('+1 year'));
@@ -123,6 +153,11 @@ class RamUser {
     }
   }
 
+  /**
+   * Check if a user token is valid. A valid token is not expired or matches a user's token.
+   * @param $t
+   * @return bool
+   */
   public function verifyToken($t) {
     $today = strtotime('now');
     $currentexp = strtotime($this->tokenExp);
@@ -134,10 +169,21 @@ class RamUser {
     }
   }
 
+  /**
+   * decodes basic HTTP auth.
+   * @param $header
+   * @return mixed
+   */
   public function decodeHeader($header) {
     return explode(':',base64_decode(substr($header, 6)));
   }
 
+  /**
+   * Verifies user password.
+   * @param $tryUser
+   * @param $tryPass
+   * @throws \Exception
+   */
   public function verifyPass($tryUser, $tryPass) {
     $sql = "SELECT pass FROM `RamUsers` WHERE user = :user LIMIT 1";
     $this->db->query($sql);
@@ -149,14 +195,22 @@ class RamUser {
       $this->verified = TRUE;
     } else {
       $this->verified = FALSE;
-      throw new \Exception("Wrong Password");
+      throw new \Exception("Wrong Username or Password");
     }
   }
 
+  /**
+   * Generates a token to be associated with a user.
+   * @return mixed
+   */
   private function _generate_token() {
     return bin2hex(openssl_random_pseudo_bytes(16));
   }
 
+  /**
+   * Hashes user's password for storage in the database. 
+   * @return mixed
+   */
   private function _create_hash() {
     $salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_RANDOM)), '+', '.');
     $salt = sprintf("$2a$%02d$", $this->cost) . $salt;
