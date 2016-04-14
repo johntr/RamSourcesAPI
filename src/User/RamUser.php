@@ -153,7 +153,7 @@ class RamUser {
       $this->db->bind(':token_exp', $tokenexp);
       $this->db->bind(':user', $this->user);
       $this->db->execute();
-
+      //@TODO Return more user info here and key value that shit.
       return array($this->user, $token);
     }
     else {
@@ -233,7 +233,7 @@ class RamUser {
    * @return mixed
    */
   private function _create_hash() {
-    $salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_RANDOM)), '+', '.');
+    $salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
     $salt = sprintf("$2a$%02d$", $this->cost) . $salt;
     return crypt($this->password, $salt);
   }
