@@ -21,6 +21,7 @@ GET `api.ramsources.com/v1/resource/all`                 *Returns all resources*
 GET `api.ramsources.com/v1/resource/id/{id}`             *Returns a specific resource add*    
 GET `api.ramsources.com/v1/resource/type/{type}`      *Returns all resources of a specific type*  
 GET `api.ramsources.com/v1/resource/detail/id/{id}`     *Returns detailed info about a resource*  
+GET `api.ramsources.com/v1/resource/report/id/{id}`     *Notifies system there is an issue with resource*  
 POST `api.ramsources.com/v1/resource/new`        *creates a new resource based on form values*  
 PUT `api.ramsources.com/v1/resource/update/id/{id}`     *Updates resource info based on JSON data*   
 
