@@ -21,7 +21,7 @@ class ResourceController {
    */
   function getResources($id = null) {
     if ($id) {
-      $sql = "SELECT T1.resource_id, T1.resource_name, T1.resource_type, T1.floor, T2.name, T2.location
+      $sql = "SELECT T1.resource_id, T1.resource_name, T1.resource_type, T1.floor, T2.name, T2.location, T1.incident_status
               FROM `Resource` as T1
               INNER JOIN `Building` as T2
               ON T1.building_id = T2.building_id
@@ -32,7 +32,7 @@ class ResourceController {
       return $this->db->single();
     }
     else {
-      $sql = "SELECT T1.resource_id, T1.resource_name, T1.resource_type, T1.floor, T2.name, T2.location
+      $sql = "SELECT T1.resource_id, T1.resource_name, T1.resource_type, T1.floor, T2.name, T2.location, T1.incident_status
               FROM `Resource` as T1
               INNER JOIN `Building` as T2
               ON T1.building_id = T2.building_id";
@@ -289,12 +289,64 @@ class ResourceController {
       $this->db->execute();
       $this->db->endTransaction();
 
-      $message = array('Result' => 'Success');
+      $message = array('result' => 'Success');
     } catch (\Exception $e) {
       $this->db->cancelTransaction();
-      $message = array('Result' => $e->getMessage());
+      $message = array('result' => $e->getMessage());
     }
     return $message;
+  }
+
+  public function reportResource($rid) {
+    $resource = $this->getResources($rid);
+
+
+    if ($resource['incident_status'] == 0) {
+      $sql = "UPDATE `Resource` SET incident_status = 1 WHERE resource_id = :rid";
+
+      try {
+        $this->db->query($sql);
+        $this->db->bind(':rid', $rid);
+        $this->db->execute();
+        $this->_notifyReport($resource);
+        return array("result" => "Success", "message" => "Message of outage sent.");
+      } catch (\PDOException $e) {
+        return array("result" => "Failure", "message" => $e->getMessage());
+      } catch (\Exception $e) {
+        return array("result" => "Failure", "message" => $e->getMessage());
+      }
+    }
+    else {
+      return array("result" => "Failure", "message" => "An incident has already been reported for this resource");
+    }
+  }
+
+  private function _notifyReport($r) {
+    $mail = new \PHPMailer();
+    $mail->Host = 'localhost';
+    $mail->Port = 587;
+    $mail->setFrom('no-reply@ramsources.com', 'Ramsources Email Validation');
+    $mail->isHTML(true);
+
+    $mail->addAddress('info@rasources.com', "RamSources Info");
+    //$mail->addBCC('jtredlich@gmail.com', 'John Redlich');
+    $mail->Subject = 'Ramsources Email Verification';
+    $HTMLbody = $this->_createHTMLBody($r);
+    $TXTbody = strip_tags($HTMLbody);
+    $mail->Body = $HTMLbody;
+    $mail->AltBody = $TXTbody;
+
+    if (!$mail->send()) {
+      throw new \Exception($mail->ErrorInfo);
+    }
+    else {
+      //$this->lo->logNotification("Sent email to {$this->userInfo['email']}.");
+    }
+  }
+
+  private function _createHTMLBody($r) {
+    $body = "<p>Hello Sir,<br/>This is RamSources letting you know there is a problem with the {$r['resource_type']} on floor {$r['floor']} in {$r['name']}. </p>";
+    return $body;
   }
 
   private function _locationExplode($data) {

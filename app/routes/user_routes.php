@@ -40,18 +40,9 @@ $app->group('/user', function() use ($app, $container) {
     $userDomain = explode('@', $user);
 
     if ($userDomain[1] == "farmingdale.edu") {
-      try {
-        $u->createUser($user, $pass, $name);
-        $response->withStatus(200);
-        $status = ['result' => 'Success', 'message' => 'User has been created'];
-        $response->getBody()->write(json_encode($status));
-      } catch (PDOException $e) {
-        $response->withStatus(500);
-        $status = ['result' => 'Fail', 'message' => $e->getMessage()];
-        $response->getBody()->write(json_encode($status));
-        $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
-        return $newresponce;
-      }
+      $message = $u->createUser($user, $pass, $name);
+      $response->withStatus(200);
+      $response->getBody()->write(json_encode($message));
     }
     else {
       $response->withStatus(401);
