@@ -4,7 +4,7 @@ require_once "config.php";
 use Pimple\Container;
 
 $container = new Container();
-
+//each of these is an annon function that creates our class. You know, what DOES Pimple do? 
 $container['dbconfig'] = $dbconfig;
 
 //Utils
