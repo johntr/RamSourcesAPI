@@ -89,7 +89,7 @@ $app->group('/resource', function() use ($app, $container) {
     $response->getBody()->write(json_encode($updateResponse));
     $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
     return $newResponse;
-  });
+  })->add($container['user_middle']);
 
   /**
    * PUT /v1/resource/update/id/{id}
@@ -104,5 +104,5 @@ $app->group('/resource', function() use ($app, $container) {
     $response->getBody()->write(json_encode($updateResponse));
     $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
     return $newResponse;
-  });
+  })->add($container['user_middle']);
 }); //end /resource

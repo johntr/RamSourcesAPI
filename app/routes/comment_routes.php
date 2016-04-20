@@ -33,7 +33,7 @@ $app->group('/comment', function() use ($app, $container) {
       $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
       return $newResponse;
     }
-  });
+  })->add($container['user_middle']);
 
   /**
    * GET /v1/comment/id/{id}
@@ -62,4 +62,4 @@ $app->group('/comment', function() use ($app, $container) {
     $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
     return $newResponse;
   });
-});
+})->add($container['user_middle']);
