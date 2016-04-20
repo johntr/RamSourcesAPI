@@ -220,11 +220,14 @@ class RamUser {
    */
   public function verifyPass($tryUser, $tryPass) {
     //get user and password
-    $sql = "SELECT pass FROM `RamUsers` WHERE user = :user LIMIT 1";
+    $sql = "SELECT pass, email_verified FROM `RamUsers` WHERE user = :user LIMIT 1";
     $this->db->query($sql);
     $this->db->bind(':user', $tryUser);
     $this->db->execute();
     $userPass = $this->db->single();
+    if($userPass['email_verified'] == 0) {
+      throw new \Exception("User needs to verify email address.");
+    }
     //check to see if user's password matches.
     if (hash_equals($userPass['pass'], crypt($tryPass, $userPass['pass']))) {
       //set verified flag if passes

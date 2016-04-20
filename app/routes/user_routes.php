@@ -38,7 +38,7 @@ $app->group('/user', function() use ($app, $container) {
       return $newresponce;
     }
     catch (Exception $e) {
-      //i dont think so buddy. That isn't the right info. 
+      //I don't think so buddy. That isn't the right info.
       $status = array('result' => 'Fail', 'message' => $e->getMessage());
       $response->withStatus(500);
       $response->getBody()->write(json_encode($status));
