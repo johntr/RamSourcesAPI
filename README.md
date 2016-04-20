@@ -48,7 +48,7 @@ resource_floor:2
 resource_building_id:2
 resource_resource_name:building-2-1
 bathroom_num_stalls:4
-bathroom_sex:m
+bathroom_gender:m
 bathroom_soap_type:liquid
 bathroom_dryer_type:blower
 bathroom_num_urinals:3

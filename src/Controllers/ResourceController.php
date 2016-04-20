@@ -220,7 +220,7 @@ class ResourceController {
     //now figure out what type we have.
     switch($resourceType) {
       case 'bathroom':
-        $typeSQL = "INSERT INTO `Bathroom` (soap_type, dryer_type, num_stalls, num_urinals, sex, resource_id) VALUES (:soap_type, :dryer_type, :num_stalls, :num_urinals, :sex, :resource_id)";
+        $typeSQL = "INSERT INTO `Bathroom` (soap_type, dryer_type, num_stalls, num_urinals, gender, resource_id) VALUES (:soap_type, :dryer_type, :num_stalls, :num_urinals, :gender, :resource_id)";
         break;
       case 'vending':
         $typeSQL = "INSERT INTO  `Vending` (pay_type, type, resource_id) VALUES (:pay_type, :type, :resource_id)";
