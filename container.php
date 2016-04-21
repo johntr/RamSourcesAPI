@@ -6,6 +6,7 @@ use Pimple\Container;
 $container = new Container();
 //each of these is an annon function that creates our class. You know, what DOES Pimple do? 
 $container['dbconfig'] = $dbconfig;
+$container['mailkey'] = $dbconfig['mailkey'];
 
 //Utils
 $container['database'] = function ($c) {
@@ -13,6 +14,9 @@ $container['database'] = function ($c) {
 };
 $container['logs'] = function ($c) {
   return new \RamSources\Utils\Logging();
+};
+$container['mailer'] = function ($c) {
+  return new \RamSources\Utils\Mailer($c);
 };
 
 //Middleware

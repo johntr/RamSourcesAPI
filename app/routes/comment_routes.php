@@ -61,5 +61,5 @@ $app->group('/comment', function() use ($app, $container) {
     $response->getBody()->write(json_encode($deleteResponse));
     $newResponse = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
     return $newResponse;
-  });
-})->add($container['user_middle']);
+  })->add($container['user_middle']);
+});

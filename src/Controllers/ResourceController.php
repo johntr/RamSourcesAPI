@@ -384,26 +384,33 @@ class ResourceController {
    * @throws \phpmailerException
    */
   private function _notifyReport($r) {
-    $mail = new \PHPMailer();
-    $mail->Host = 'localhost';
-    $mail->Port = 587;
-    $mail->setFrom('no-reply@ramsources.com', 'Ramsources Email Validation');
-    $mail->isHTML(true);
 
-    $mail->addAddress('info@ramsources.com', "RamSources Info");
-    //$mail->addBCC('jtredlich@gmail.com', 'John Redlich');
-    $mail->Subject = 'Ramsources Email Verification';
-    $HTMLbody = $this->_createHTMLBody($r);
-    $TXTbody = strip_tags($HTMLbody);
-    $mail->Body = $HTMLbody;
-    $mail->AltBody = $TXTbody;
-
-    if (!$mail->send()) {
-      throw new \Exception($mail->ErrorInfo);
-    }
-    else {
-      //$this->lo->logNotification("Sent email to {$this->userInfo['email']}.");
-    }
+    //setup account to send email.
+    $this->mail->addTo(array("jtredlich@gmail.com"));
+    $this->mail->addFrom();
+    $this->mail->addSubject("A RamSources is down.");
+    $this->mail->addBody($this->_createHTMLBody());
+    $this->mail->send();
+//    $mail = new \PHPMailer();
+//    $mail->Host = 'localhost';
+//    $mail->Port = 587;
+//    $mail->setFrom('no-reply@ramsources.com', 'Ramsources Email Validation');
+//    $mail->isHTML(true);
+//
+//    $mail->addAddress('info@ramsources.com', "RamSources Info");
+//    //$mail->addBCC('jtredlich@gmail.com', 'John Redlich');
+//    $mail->Subject = 'Ramsources Email Verification';
+//    $HTMLbody = $this->_createHTMLBody($r);
+//    $TXTbody = strip_tags($HTMLbody);
+//    $mail->Body = $HTMLbody;
+//    $mail->AltBody = $TXTbody;
+//
+//    if (!$mail->send()) {
+//      throw new \Exception($mail->ErrorInfo);
+//    }
+//    else {
+//      //$this->lo->logNotification("Sent email to {$this->userInfo['email']}.");
+//    }
   }
 
   /**

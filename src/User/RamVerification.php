@@ -15,7 +15,8 @@ class RamVerification {
 
   private $db;
   private $log;
-  
+
+  /** @var  \RamSources\Utils\Mailer $mail */
   private $mail;
   private $hash;
   private $userInfo = array();
@@ -24,12 +25,7 @@ class RamVerification {
 
     $this->db = $container['database'];
     $this->log = $container['logs'];
-    $this->mail = new PHPMailer();
-    //setup email config. @TODO add messaging class. 
-    $this->mail->Host = 'localhost';
-    $this->mail->Port = 587;
-    $this->mail->setFrom('no-reply@ramsources.com', 'Ramsources Email Validation');
-    $this->mail->isHTML(true);
+    $this->mail = $container['mailer'];
 
   }
 
@@ -52,7 +48,6 @@ class RamVerification {
       $this->db->bind(':id', $this->userInfo['id']);
       $this->db->bind(':status', 0);
       $this->db->execute();
-      
       //send out email. 
       $this->sendVerifyMail();
     }
@@ -71,26 +66,31 @@ class RamVerification {
    * @throws \phpmailerException
    */
   private function sendVerifyMail() {
-    //setup account to send email. 
-    $this->mail->addAddress($this->userInfo['email'], $this->userInfo['name']);
-    //admin email to keep track of functionality. 
-    $this->mail->addBCC('jtredlich@gmail.com', 'John Redlich');
-    $this->mail->Subject = 'Ramsources Email Verification';
-    //generate email body based on user info. 
-    $HTMLbody = $this->_createHTMLBody();
-    //in case they only use plain text. Who even does that anymore? Richard Stallman, that is who. 
-    $TXTbody = strip_tags($HTMLbody);
-    $this->mail->Body = $HTMLbody;
-    $this->mail->AltBody = $TXTbody;
-    //send our mail. 
-    if (!$this->mail->send()) {
-      //shit's broke. 
-      throw new \Exception($this->mail->ErrorInfo);
-    }
-    else {
-      //log that we sent the email. 
-      $this->log->logNotification("Sent email to {$this->userInfo['email']}.");
-    }
+    //setup account to send email.
+    $this->mail->addTo(array($this->userInfo['email']));
+    $this->mail->addFrom();
+    $this->mail->addSubject("RamSources Email Verification");
+    $this->mail->addBody($this->_createHTMLBody());
+    $this->mail->send();
+//    $this->mail->addAddress($this->userInfo['email'], $this->userInfo['name']);
+//    //admin email to keep track of functionality.
+//    $this->mail->addBCC('jtredlich@gmail.com', 'John Redlich');
+//    $this->mail->Subject = 'Ramsources Email Verification';
+//    //generate email body based on user info.
+//    $HTMLbody = $this->_createHTMLBody();
+//    //in case they only use plain text. Who even does that anymore? Richard Stallman, that is who.
+//    $TXTbody = strip_tags($HTMLbody);
+//    $this->mail->Body = $HTMLbody;
+//    $this->mail->AltBody = $TXTbody;
+//    //send our mail.
+//    if (!$this->mail->send()) {
+//      //shit's broke.
+//      throw new \Exception($this->mail->ErrorInfo);
+//    }
+//    else {
+//      //log that we sent the email.
+//      $this->log->logNotification("Sent email to {$this->userInfo['email']}.");
+//    }
   }
 
   /**
@@ -137,7 +137,7 @@ class RamVerification {
    * @return string
    */
   private function _createHTMLBody() {
-    $body = "<p>Hello {$this->userInfo['name']},<br/>Thank you for creating a RamSources account. RamSources is a service for SUNY Farmingdale students, we will need you to verify your account by either clicking the link below or copying it into a browser.<br/><a href='http://www.ramsources.com/app/userverify?id=$this->hash'>http://www.ramsources.com/app/userverify?id=$this->hash</a></p>";
+    $body = "<p>Hello {$this->userInfo['name']},<br/>Thank you for creating a RamSources account. RamSources is a service for SUNY Farmingdale students, we will need you to verify your account by either clicking the link below or copying it into a browser.<br/><a href='http://www.ramsources.com/userverify/index.html?id=$this->hash'>http://www.ramsources.com/app/userverify?id=$this->hash</a></p>";
     return $body;
   }
 
