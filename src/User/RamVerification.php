@@ -100,7 +100,7 @@ class RamVerification {
    */
   function getIdFromHash($hash) {
     $this->hash = $hash;
-    echo $hash;
+    //check to see if we get a hash id.
     if(is_null($this->hash) || empty($this->hash)) {
       return array('result' => 'Fail', "message" => "No hash passed.");
     }
