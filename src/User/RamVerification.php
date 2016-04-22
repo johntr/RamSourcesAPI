@@ -126,7 +126,7 @@ class RamVerification {
       }
       //let them know the hash was used. 
       else {
-        $this->log->logError("Fail: Hash already used");
+        //$this->log->logError("Fail: Hash already used");
         return array('result' => 'Fail', "message" => "Hash already used");
       }
     }
