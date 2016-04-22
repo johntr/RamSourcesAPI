@@ -100,6 +100,10 @@ class RamVerification {
    */
   function getIdFromHash($hash) {
     $this->hash = $hash;
+    echo $hash;
+    if(is_null($this->hash) || empty($this->hash)) {
+      return array('result' => 'Fail', "message" => "No hash passed.");
+    }
     //set verification hash as used. 
     $updateHash = "UPDATE `Verification` SET status=1 WHERE verify_hash=:hash";
     //update user account that it is verified. 

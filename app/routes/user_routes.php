@@ -78,7 +78,8 @@ $app->group('/user', function() use ($app, $container) {
    */
   $app->put('/userverify', function(Request $request, Response $response, $args) use ($u, $v) {
     $info = $request->getQueryParams();
-    $hash = $info['id'];
+    $hash = isset($info['id']) ? $info['id'] : null;
+
     //get the user id based on the hash
     $idReturn = $v->getIdFromHash($hash);
     //if we find the id then pass that id to be verified.
