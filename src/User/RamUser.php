@@ -121,7 +121,7 @@ class RamUser {
     catch(\PDOException $e) {
       echo $e;
     }
-    if(isset($userInfo)) {
+    if(!empty($userInfo)) {
       $this->id = $userInfo[0]['id'];
       $this->user = $userInfo[0]['user'];
       $this->password = $userInfo[0]['pass'];
