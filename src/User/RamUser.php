@@ -8,6 +8,8 @@
  */
 namespace RamSources\User;
 
+use SendGrid\Exception;
+
 class RamUser {
   private $id;
   private $user;
@@ -112,15 +114,20 @@ class RamUser {
    */
   public function getUser($user) {
     $sql = "SELECT * FROM `RamUsers` WHERE user = :user";
+
+
     try{
+      $this->_checkIfFarmingdaleUser($user);
       $this->db->query($sql);
       $this->db->bind(':user', $user);
       $this->db->execute();
       $userInfo = $this->db->results();
+    } catch(\PDOException $e) {
+      throw new Exception($e->getMessage());
+    } catch(\Exception $e) {
+      throw new Exception($e->getMessage());
     }
-    catch(\PDOException $e) {
-      echo $e;
-    }
+
     if(!empty($userInfo)) {
       $this->id = $userInfo[0]['id'];
       $this->user = $userInfo[0]['user'];
@@ -256,6 +263,12 @@ class RamUser {
 
     } catch(\PDOException $e) {
       //@TODO log error.
+    }
+  }
+  private function _checkIfFarmingdaleUser($user) {
+    $userDomain = explode('@', $user);
+    if(strtolower($userDomain[1]) != 'farmingdale.edu') {
+      throw new Exception('Farmingdale.edu email address required.');
     }
   }
   /**
