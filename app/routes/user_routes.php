@@ -25,10 +25,10 @@ $app->group('/user', function() use ($app, $container) {
     $authHeader = $request->getHeader('Authorization');
     //decode login info.
     $userInfo = $u->decodeHeader($authHeader[0]);
-    //get the user data.
-    $u->getUser($userInfo[0]);
-
+    
     try {
+      //get the user data.
+      $u->getUser($userInfo[0]);
       //verifiy the pass and flag user verified.
       $u->verifyPass($userInfo[0], $userInfo[1]);
       $response->withStatus(200);
@@ -40,7 +40,7 @@ $app->group('/user', function() use ($app, $container) {
     catch (Exception $e) {
       //I don't think so buddy. That isn't the right info.
       $status = array('result' => 'Fail', 'message' => $e->getMessage());
-      $response->withStatus(500);
+      $response->withStatus(400);
       $response->getBody()->write(json_encode($status));
       $newresponce = $response->withHeader('Content-type', 'application/json; charset=UTF-8');
       return $newresponce;
