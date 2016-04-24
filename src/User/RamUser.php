@@ -129,7 +129,7 @@ class RamUser {
       $this->token = $userInfo[0]['token'];
       $this->tokenExp = $userInfo[0]['token_exp'];
     } else {
-      throw new \Exception("No User Returned");
+      throw new \Exception("User not found");
     }
   }
 
