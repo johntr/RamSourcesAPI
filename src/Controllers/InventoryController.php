@@ -31,7 +31,7 @@ class InventoryController {
    */
   function getInventoryById($id) {
 
-    $sql = "SELECT inv_type, inv_name FROM `Ramventory` WHERE resource_id = :id ";
+    $sql = "SELECT DISTINCT inv_type, inv_name FROM `Ramventory` WHERE resource_id = :id ";
 
     try {
       $this->db->query($sql);
