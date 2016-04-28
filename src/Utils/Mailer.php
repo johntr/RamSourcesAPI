@@ -38,10 +38,10 @@ class Mailer {
   }
 
   /**
-   * Add address to from addresss. This is configured for this use. 
+   * Add address to from addresses. This is configured for this use.
    */
   function addFrom() {
-    $this->email->setFrom('no-reply@hrpotentialcenter.com');
+    $this->email->setFrom('no-reply@ramsources.com');
     $this->email->setBcc('jtredlich@gmail.com');
 
   }
