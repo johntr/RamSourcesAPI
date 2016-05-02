@@ -134,6 +134,7 @@ class ResourceController {
     $data = $this->db->results();
     //break location out from comma delimited.
     $output = $this->_locationExplode($data);
+    $output = $this->_addWebImage($output);
     //It was suggested we return the inventory and ratings on this function.
     $v = $this->c['inventory'];
     $r = $this->c['ratings'];
@@ -448,5 +449,28 @@ class ResourceController {
     }
     unset($d);
     return $buildings;
+  }
+
+  /**
+   *
+   * Function to format image url for json output.
+   *
+   * @param $data
+   * @return mixed
+   */
+  private function _addWebImage($data) {
+    //check to see if data is the type we are going to build a url for.
+    if($data[0]['resource_type'] == 'vending') {
+      //loop through data
+      for($i=0; $i<count($data); $i++) {
+        //build file name
+        $filename = $data[$i]['resource_id'] . "-" . $data[$i]['type'];
+        $filename .= ".jpg";
+        //build url
+        $data[$i]['image_url'] = "http://ramsources.com/img/" . $data[$i]['resource_type'] . "/" . $filename;
+      }
+    }
+    //return data with url
+    return $data;
   }
 }
