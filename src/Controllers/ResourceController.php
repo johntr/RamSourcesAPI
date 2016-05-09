@@ -459,8 +459,8 @@ class ResourceController {
    * @return mixed
    */
   private function _addWebImage($data) {
-    //check to see if data is the type we are going to build a url for.
-    if($data[0]['resource_type'] == 'vending') {
+    //check to see if data is the type we are going to build a url for. We never want pictures of bathrooms...... 
+    if($data[0]['resource_type'] != 'bathroom') {
       //loop through data
       for($i=0; $i<count($data); $i++) {
         //build file name
